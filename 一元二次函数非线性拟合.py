@@ -15,6 +15,10 @@ def Coefficient(n, Xi=[], Yi=[]):
     Coe_y = Coe_y / n
     return(Coe_a, Coe_b, Coe_c, Coe_y)
 
+def fit(n, Xi, Yi):
+    num = (Xi - Yi)**n
+    return num
+
 # y = 6.9 - 5.6*x + 1.2*x*x
 Xi_1 = [-7, -6, -5, -2.5, 1, 2.5, 5, 7, 9, 12]
 Yi_1 = [104.6, 83.1, 65.8, 27.5, 2.5, 0.386, 9.36, 26.9, 52.8, 112.6]
@@ -38,12 +42,25 @@ plt.figure(figsize = (5, 5))    #创建图形，设置图形整体大小，单�
 plt.scatter(Xi_1, Yi_1, color = "red", label = "样本点", linewidth = 2)    #画样本点
 x = np.linspace(Xi_1[0] - 0.3, Xi_1[len(Xi_1) - 1] + 0.3, 1000)    #确定X轴需显示数据的范围，并设置曲线点数
 
-#绘制y = a + b*x + c*x^2函数
+#绘制y = a + b*x + c*x^2函数 及计算拟合优度 R-square
 a = round(xx[0][0], 6)
 b = round(xx[1][0], 6)
 c = round(xx[2][0], 6)
 print('a＝{0}，b＝{1}，c＝{2}。'.format(a, b, c))
 y = a + b*x + c*x**2
+Xp = np.mean(Xi_1)    #求列表Xi_1的平均值
+Yp = np.mean(Yi_1)    #求列表Yi_1的平均值
+YL2 = 0; YP2 = 0; XP2 = 0; XP3 = 0; YP3 = 0
+for i in range(len(Xi_1)):
+    YL2 += fit(2, Yi_1[i], a + b*Xi_1[i] + c*Xi_1[i]**2)
+    YP2 += fit(2, Yi_1[i], Yp)
+    #XP2 += fit(2, Xi_1[i], Xp)
+    #XP3 += fit(1, Xi_1[i], Xp)
+    #YP3 += fit(1, Yi_1[i], Yp)
+square = 1 - YL2 / YP2    #拟合优度 R-squar
+print('拟合优度 R-square=', square)
+#r = XP3 * YP3 / (XP2 * YP2)**0.5
+#print('相关系数 r=', square)
 plt.plot(x, y, color = "orange", label = "拟合数据", linewidth=2)    #画拟合曲线
 plt.title("拟合曲线为 y ＝ {0}+{1}x+{2}x^2".format(a, b, c), FontProperties='STKAITI', fontsize=14)    #需在坐标图顶部标注的字
 
